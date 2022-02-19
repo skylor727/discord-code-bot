@@ -1,5 +1,6 @@
 require("dotenv").config(); //initialize dotenv
 const Discord = require("discord.js"); //import discord.js
+const { fork } = require("child_process");
 
 const client = new Discord.Client({
   intents: [Discord.Intents.FLAGS.GUILDS, Discord.Intents.FLAGS.GUILD_MESSAGES],
@@ -12,9 +13,12 @@ client.on("ready", () => {
 client.on("messageCreate", (msg) => {
   if (msg.content.includes("!code ```") && !msg.author.bot) {
     try {
-      const codeLine = 'var process = {}; var global = {}; ' + msg.content.match(/!code[\n ]+`{3}(.*)`{3}/is)[1];
-      let result = Function(codeLine)();
-      msg.reply(result.toString());
+      const result = fork("child.js");
+      setTimeout(() => {
+        result.kill();
+      }, 5000);
+      result.send(msg);
+        result.on("message", (result) => msg.reply(JSON.stringify(result)));
     } catch (error) {
       msg.reply(error.toString());
     }
