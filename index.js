@@ -15,15 +15,18 @@ client.on("messageCreate", (msg) => {
     try {
       const result = fork("child.js");
       setTimeout(() => {
+        if (!result.killed) msg.reply("Error Timeout");
         result.kill();
       }, 5000);
       result.send(msg);
-        result.on("message", (result) => msg.reply(JSON.stringify(result)));
+      result.on("message", (res) => {
+        result.kill();
+        msg.reply(JSON.stringify(res));
+      });
     } catch (error) {
       msg.reply(error.toString());
     }
   }
 });
-
 
 client.login(process.env.CLIENT_TOKEN); //login bot using token
