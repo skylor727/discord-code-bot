@@ -11,6 +11,12 @@ client.on("ready", () => {
 });
 
 client.on("messageCreate", (msg) => {
+  if (msg.content === "!help") {
+    msg.reply(
+      "To use code bot please type !code `​`​` "+
+        "```INSERT CODE``` `​`​` Please also add a return statement for any value you are trying to get back; such as ``` return 2*2 ```"
+    );
+  }
   if (msg.content.includes("!code ```") && !msg.author.bot) {
     try {
       const result = fork("child.js");
